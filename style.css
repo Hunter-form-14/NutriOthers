@@ -1,0 +1,196 @@
+/* 全体の基本設定 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    background-color: #FFF8E8;
+    /* 淡いクリーム色 */
+    color: #6B564E;
+    text-align: center;
+}
+
+.wrapper {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+/* 各ステップ（初期はstep1のみ表示） */
+.step {
+    display: none;
+}
+
+.step.active {
+    display: block;
+}
+
+/* 性別選択部分 */
+.gender-selection {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 16px;
+}
+
+.gender-option {
+    border: 2px solid #E6D7B3;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    width: 45%;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.gender-option input {
+    display: none;
+}
+
+.gender-option .gender-icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.gender-option.selected {
+    background-color: #BBD59D;
+    border-color: #FF9900;
+    color: #fff;
+}
+
+/* 年齢入力 */
+.input-group {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin: 6px 0;
+}
+
+input[type="number"] {
+    width: 80px;
+    padding: 4px;
+    margin-left: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 食事写真アップロード（1列×4行） */
+.upload-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-row-gap: 12px;
+    grid-column-gap: 12px;
+    margin-bottom: 16px;
+}
+
+.upload-grid label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    text-align: left;
+}
+
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.image-preview img {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* ボタン */
+button {
+    background-color: #BBD59D;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* 選択ボタン用の追加スタイル */
+.selection-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 15px;
+    font-size: 16px;
+    background-color: #BBD59D;
+    text-align: center;
+}
+
+.back-btn {
+    margin-top: 20px;
+    background-color: #ccc;
+    color: #333;
+}
+
+/* レーダーチャート */
+#chartArea {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+/* 不足度リスト */
+#nutrientList {
+    text-align: left;
+}
+
+#nutrientList p {
+    margin: 4px 0;
+}
+
+/* 出力ボタン（最終画面下部）：背景色をオレンジに変更 */
+#outputBtn,
+#supplement-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px 0;
+    font-size: 16px;
+    background-color: orange;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+}
+
+/* ロード画面 */
+#loadingIndicator {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+#loadingImage {
+    width: 128px;
+    height: 128px;
+    animation: rotation 3s linear infinite;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

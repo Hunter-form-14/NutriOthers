@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriSynth アプリケーション</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <div id="selection-screen" class="step active">
+            <h2>アプリケーションを選択</h2>
+            <p>利用したい機能を選択してください。</p>
+            <button id="select-refresh-btn" class="selection-btn">NutriRefresh<br><small>（失われた栄養の再現）</small></button>
+            <button id="select-restore-btn" class="selection-btn">NutriRestore<br><small>（調理で失われた栄養の復元）</small></button>
+            <button id="select-replace-btn" class="selection-btn">NutriReplace<br><small>（食材の栄養的代替）</small></button>
+        </div>
+
+        <div id="nutri-refresh-app" class="step">
+            <h2>NutriRefresh: 失われた栄養の再現</h2>
+            <p style="text-align: left; font-size: 14px; margin-bottom: 20px;">
+                調理や保存によって失われた栄養素を推定します。対象の食品と、調理後の経過時間を選択してください。
+            </p>
+            <div class="input-group">
+                <label for="refresh-food-select">食品の選択:</label>
+                <select id="refresh-food-select" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="カットフルーツ">カットフルーツ</option>
+                    <option value="焼き魚">焼き魚</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="refresh-elapsed-time">経過時間 (時間):</label>
+                <input type="number" id="refresh-elapsed-time" min="0" value="1" style="width: 100%; box-sizing: border-box; padding: 8px;">
+            </div>
+            <button id="refresh-calculate-btn" style="width: 100%;">失われた栄養素を計算</button>
+            <div id="refresh-result-area" style="margin-top: 20px; text-align: left;"><p>ここに推定結果が表示されます。</p></div>
+            <button id="refresh-supplement-btn" style="display: none;">NutriSynthから補給する</button>
+            <button class="back-btn" data-target="selection-screen">機能選択に戻る</button>
+        </div>
+
+        <div id="nutri-restore-app" class="step">
+            <h2>NutriRestore: 調理で失われた栄養の復元</h2>
+            <p style="text-align: left; font-size: 14px; margin-bottom: 20px;">
+                調理によって失われがちな栄養素を推定します。対象の食品と調理方法を選択してください。
+            </p>
+            <div class="input-group">
+                <label for="restore-food-select">食品の選択:</label>
+                <select id="restore-food-select" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="魚">魚</option>
+                    <option value="ほうれん草">ほうれん草</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="restore-cooking-method">調理方法の選択:</label>
+                <select id="restore-cooking-method" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="焼く">焼く</option>
+                    <option value="茹でる">茹でる</option>
+                    <option value="揚げる">揚げる</option>
+                </select>
+            </div>
+            <button id="restore-calculate-btn" style="width: 100%;">失われた栄養素を計算</button>
+            <div id="restore-result-area" style="margin-top: 20px; text-align: left;"><p>ここに推定結果が表示されます。</p></div>
+            <button id="restore-supplement-btn" style="display: none;">NutriSynthから補給する</button>
+            <button class="back-btn" data-target="selection-screen">機能選択に戻る</button>
+        </div>
+
+        <div id="nutri-replace-app" class="step">
+            <h2>NutriReplace: 食材の栄養的代替</h2>
+            <p style="text-align: left; font-size: 14px; margin-bottom: 20px;">
+                特定の食材を避ける場合、その食材に含まれる栄養素を代替します。
+            </p>
+            <div class="input-group">
+                <label for="replace-recipe-select">レシピの選択:</label>
+                <select id="replace-recipe-select" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="グリーンスムージー">グリーンスムージー</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="replace-ingredient-select">除外する食材:</label>
+                <select id="replace-ingredient-select" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="ほうれん草">ほうれん草</option>
+                </select>
+            </div>
+            <button id="replace-calculate-btn" style="width: 100%;">代替する栄養素を計算</button>
+            <div id="replace-result-area" style="margin-top: 20px; text-align: left;"><p>ここに推定結果が表示されます。</p></div>
+            <button id="replace-supplement-btn" style="display: none;">NutriSynthから代替栄養素を添加する</button>
+            <button class="back-btn" data-target="selection-screen">機能選択に戻る</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const screens = {
+                selection: document.getElementById('selection-screen'),
+                refresh: document.getElementById('nutri-refresh-app'),
+                restore: document.getElementById('nutri-restore-app'),
+                replace: document.getElementById('nutri-replace-app')
+            };
+
+            // --- 画面切り替えロジック ---
+            const showScreen = (screenId) => {
+                Object.values(screens).forEach(screen => screen.classList.remove('active'));
+                screens[screenId].classList.add('active');
+            };
+
+            document.getElementById('select-refresh-btn').addEventListener('click', () => showScreen('refresh'));
+            document.getElementById('select-restore-btn').addEventListener('click', () => showScreen('restore'));
+            document.getElementById('select-replace-btn').addEventListener('click', () => showScreen('replace'));
+
+            document.querySelectorAll('.back-btn').forEach(button => {
+                button.addEventListener('click', () => showScreen('selection'));
+            });
+            
+            // --- API通信を管理する汎用関数 ---
+            async function postToApi(endpoint, body) {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'サーバーとの通信に失敗しました。');
+                }
+                return response.json();
+            }
+
+            // --- NutriRefresh ロジック ---
+            const refreshCalcBtn = document.getElementById('refresh-calculate-btn');
+            const refreshResultArea = document.getElementById('refresh-result-area');
+            const refreshSupplementBtn = document.getElementById('refresh-supplement-btn');
+            let refreshDataToSupplement = null;
+
+            refreshCalcBtn.addEventListener('click', async () => {
+                const foodSelect = document.getElementById('refresh-food-select');
+                const timeInput = document.getElementById('refresh-elapsed-time');
+                const foodName = foodSelect.options[foodSelect.selectedIndex].text;
+                const elapsedTime = parseFloat(timeInput.value);
+
+                if (isNaN(elapsedTime) || elapsedTime < 0) {
+                    refreshResultArea.innerHTML = '<p style="color: red;">有効な経過時間を入力してください。</p>';
+                    return;
+                }
+                
+                refreshResultArea.innerHTML = '<p>GPTが計算中...</p>';
+                refreshSupplementBtn.style.display = 'none';
+
+                try {
+                    const result = await postToApi('/api/refresh', { foodName, elapsedTime });
+                    refreshDataToSupplement = result;
+                    refreshResultArea.innerHTML = `<h3>推定結果</h3><p><strong>食品:</strong> ${foodName}</p><p><strong>経過時間:</strong> ${elapsedTime} 時間</p><p style="color: red; font-weight: bold;">失われた栄養素 (${result.nutrient}): ${result.amount.toFixed(2)} ${result.unit}</p>`;
+                    refreshSupplementBtn.style.display = 'block';
+                } catch (error) {
+                    refreshResultArea.innerHTML = `<p style="color: red;">エラー: ${error.message}</p>`;
+                }
+            });
+
+            refreshSupplementBtn.addEventListener('click', () => {
+                if (!refreshDataToSupplement) return;
+                alert(`NutriSynthへの送信シミュレーション:\n補給する栄養素: ${refreshDataToSupplement.nutrient}\n補給量: ${refreshDataToSupplement.amount.toFixed(2)} ${refreshDataToSupplement.unit}`);
+            });
+
+
+            // --- NutriRestore ロジック ---
+            const restoreCalcBtn = document.getElementById('restore-calculate-btn');
+            const restoreResultArea = document.getElementById('restore-result-area');
+            const restoreSupplementBtn = document.getElementById('restore-supplement-btn');
+            let restoreDataToSupplement = null;
+
+            restoreCalcBtn.addEventListener('click', async () => {
+                const foodSelect = document.getElementById('restore-food-select');
+                const methodSelect = document.getElementById('restore-cooking-method');
+                const foodName = foodSelect.options[foodSelect.selectedIndex].text;
+                const cookingMethod = methodSelect.options[methodSelect.selectedIndex].text;
+
+                restoreResultArea.innerHTML = '<p>GPTが計算中...</p>';
+                restoreSupplementBtn.style.display = 'none';
+
+                try {
+                    const result = await postToApi('/api/restore', { foodName, cookingMethod });
+                    restoreDataToSupplement = result;
+                    restoreResultArea.innerHTML = `<h3>推定結果</h3><p><strong>食品:</strong> ${foodName}</p><p><strong>調理法:</strong> ${cookingMethod}</p><p style="color: red; font-weight: bold;">失われた栄養素 (${result.nutrient}): ${result.amount.toFixed(2)} ${result.unit}</p>`;
+                    restoreSupplementBtn.style.display = 'block';
+                } catch (error) {
+                    restoreResultArea.innerHTML = `<p style="color: red;">エラー: ${error.message}</p>`;
+                }
+            });
+
+            restoreSupplementBtn.addEventListener('click', () => {
+                if (!restoreDataToSupplement) return;
+                alert(`NutriSynthへの送信シミュレーション:\n復元する栄養素: ${restoreDataToSupplement.nutrient}\n復元量: ${restoreDataToSupplement.amount.toFixed(2)} ${restoreDataToSupplement.unit}`);
+            });
+
+
+            // --- NutriReplace ロジック ---
+            const replaceCalcBtn = document.getElementById('replace-calculate-btn');
+            const replaceResultArea = document.getElementById('replace-result-area');
+            const replaceSupplementBtn = document.getElementById('replace-supplement-btn');
+            let replaceDataToSupplement = null;
+
+            replaceCalcBtn.addEventListener('click', async () => {
+                const recipeSelect = document.getElementById('replace-recipe-select');
+                const ingredientSelect = document.getElementById('replace-ingredient-select');
+                const recipeName = recipeSelect.options[recipeSelect.selectedIndex].text;
+                const ingredientName = ingredientSelect.options[ingredientSelect.selectedIndex].text;
+                
+                replaceResultArea.innerHTML = '<p>GPTが計算中...</p>';
+                replaceSupplementBtn.style.display = 'none';
+
+                try {
+                    const result = await postToApi('/api/replace', { recipeName, ingredientName });
+                    replaceDataToSupplement = result.nutrients;
+                    
+                    let resultHTML = `<h3>代替すべき栄養素</h3><p><strong>「${ingredientName}」</strong>を除いた場合に失われる栄養素:</p><ul>`;
+                    replaceDataToSupplement.forEach(n => {
+                        resultHTML += `<li style="color: red; font-weight: bold;">${n.name}: ${n.amount} ${n.unit}</li>`;
+                    });
+                    resultHTML += '</ul>';
+                    
+                    replaceResultArea.innerHTML = resultHTML;
+                    replaceSupplementBtn.style.display = 'block';
+                } catch (error) {
+                    replaceResultArea.innerHTML = `<p style="color: red;">エラー: ${error.message}</p>`;
+                }
+            });
+
+            replaceSupplementBtn.addEventListener('click', () => {
+                if (!replaceDataToSupplement || replaceDataToSupplement.length === 0) return;
+                let alertMessage = 'NutriSynthへの送信シミュレーション:\n以下の栄養素を代替します:\n';
+                replaceDataToSupplement.forEach(n => {
+                    alertMessage += `- ${n.name}: ${n.amount} ${n.unit}\n`;
+                });
+                alert(alertMessage);
+            });
+        });
+    </script>
+</body>
+</html>

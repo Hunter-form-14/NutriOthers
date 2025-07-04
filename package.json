@@ -1,0 +1,31 @@
+{
+  "name": "nutriothers",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "NutriOthers",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hunter-form-14/NutriOthers.git"
+  },
+  "keywords": [
+    "nutrition",
+    "health",
+    "food",
+    "diet",
+    "wellness",
+    "tracking",
+    "calories",
+    "nutrients"
+  ],
+  "author": "HaruyaMatsushima",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hunter-form-14/NutriOthers/issues"
+  },
+  "homepage": "https://github.com/Hunter-form-14/NutriOthers#readme"
+}
