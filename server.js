@@ -6,9 +6,6 @@ import "dotenv/config.js";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
-// 静的ファイルを提供するディレクトリを指定
-app.use(express.static('public'));
-
 const app = express();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -22,7 +19,6 @@ const dbPromise = open({
 app.use(express.json({ limit: "25mb" }));
 // 静的ファイルの提供（publicディレクトリ）
 app.use(express.static("public"));
-
 
 // --- 既存のスキーマ ---
 const DetectedFoodSchema = z.object({
