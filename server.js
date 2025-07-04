@@ -6,6 +6,9 @@ import "dotenv/config.js";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
+// 静的ファイルを提供するディレクトリを指定
+app.use(express.static('public'));
+
 const app = express();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
